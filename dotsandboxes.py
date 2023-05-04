@@ -33,7 +33,6 @@ done = False
 clock = pygame.time.Clock()
 
 #Functions
-#def nought():
 
 
 #Main loop
