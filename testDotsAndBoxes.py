@@ -93,7 +93,7 @@ def reset_player():
     next_turn = False
     return turn, players, player, next_turn
 
-gameover = True
+gameover = False
 cells = create_cells()
 pos, ccell, up, right, bottom, left = reset_cells()
 fillcount, p1_score, p2_score = reset_score()
