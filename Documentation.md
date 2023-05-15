@@ -73,5 +73,9 @@ while not done:
     clock.tick(60)
     
 ```
-    
+
+
+## 12/5/23
+
+Created dots and boxes game from a youtube video series from here: https://www.youtube.com/watch?v=IMpQOY-RiIk
     
