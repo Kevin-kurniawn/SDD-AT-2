@@ -3,8 +3,8 @@
 import pygame
 
 SCREEN = WIDTH, HEIGHT = 300, 300
-CELLSIZE = 20
-PADDING = 20
+CELLSIZE = 30
+PADDING = 30
 ROWS = COLS = (WIDTH - 4*PADDING) // CELLSIZE
 print(ROWS, COLS)
 
@@ -93,6 +93,7 @@ def reset_player():
     next_turn = False
     return turn, players, player, next_turn
 
+start = False
 gameover = False
 cells = create_cells()
 pos, ccell, up, right, bottom, left = reset_cells()
@@ -101,6 +102,8 @@ turn, players, player, next_turn = reset_player()
 
 running = True
 while running:
+
+    # Key presses and screen colour
     win.fill(WHITE)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -142,15 +145,18 @@ while running:
             if event.key == pygame.K_LEFT:
                left = False 
 
+    # Creating grid
     for r in range(ROWS + 1):
         for c in range(COLS + 1):
             pygame.draw.circle(win, BLACK, (c*CELLSIZE + 2*PADDING, r*CELLSIZE + 3*PADDING), 2)
     
+    # Creating 'cells' - the boxes - and detecting which cell is clicked
     for cell in cells:
         cell.update(win)
         if pos and cell.rect.collidepoint(pos):
             ccell = cell
     
+    # Selects a specific cell, as defined by the mouse pointer
     if ccell:
         index = ccell.index
         if not ccell.winner:
