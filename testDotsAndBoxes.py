@@ -202,11 +202,11 @@ while running:
         
     p1img = font.render(f'Player 1 : {p1_score}', True, BLUE)
     p1rect = p1img.get_rect()
-    p1rect.x, p1rect.y = 2*PADDING, 15
+    p1rect.x, p1rect.y = PADDING, 15
 
     p2img = font.render(f'Player 2 : {p2_score}', True, BLUE)
     p2rect = p2img.get_rect()
-    p2rect.right, p2rect.y = WIDTH-2*PADDING, 15
+    p2rect.right, p2rect.y = WIDTH-PADDING, 15
 
     win.blit(p1img, p1rect)
     win.blit(p2img,p2rect)
