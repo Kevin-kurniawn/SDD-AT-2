@@ -17,6 +17,7 @@ GREEN = (0,255,0)
 BLUE = (0,0,255)
 BLACK = (0,0,0)
 
+smallfont = pygame.font.SysFont('cursive', 10)
 font = pygame.font.SysFont('cursive', 25)
 
 class Cell:
@@ -119,13 +120,14 @@ while running:
             if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                 running = False 
 
-            if event.key == pygame.K_r:
+            if event.key == pygame.K_r or event.key == pygame.K_s:
+                start = True
                 gameover = False
                 cells = create_cells()
                 pos, ccell, up, right, bottom, left = reset_cells()
                 fillcount, p1_score, p2_score = reset_score()
                 turn, players, player, next_turn = reset_player()
-            if not gameover:
+            if start and not gameover:
                 if event.key == pygame.K_UP:
                     up = True 
                 if event.key == pygame.K_RIGHT:
