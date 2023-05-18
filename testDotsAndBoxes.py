@@ -12,9 +12,11 @@ pygame.init()
 win = pygame.display.set_mode(SCREEN)
 
 WHITE = (255,255,255)
-RED = (255,0,0)
-GREEN = (0,255,0)
-BLUE = (0,0,255)
+RED = (179, 39, 29)
+YELLOW = (252,180,0)
+ORANGE = (235, 95, 40)
+BLUE = (21, 127, 176)
+GREY = (166, 163, 162)
 BLACK = (0,0,0)
 
 smallfont = pygame.font.SysFont('cursive', 10)
@@ -48,7 +50,7 @@ class Cell:
             if self.sides == [True]*4:
                 self.winner = winner
                 if winner == '1':
-                    self.color = GREEN
+                    self.color = BLUE
                 else:
                     self.color = RED
                 self.text = font.render(self.winner, True, WHITE)
@@ -127,6 +129,7 @@ while running:
                 pos, ccell, up, right, bottom, left = reset_cells()
                 fillcount, p1_score, p2_score = reset_score()
                 turn, players, player, next_turn = reset_player()
+                
             if start and not gameover:
                 if event.key == pygame.K_UP:
                     up = True 
@@ -151,6 +154,30 @@ while running:
     for r in range(ROWS + 1):
         for c in range(COLS + 1):
             pygame.draw.circle(win, BLACK, (c*CELLSIZE + 2*PADDING, r*CELLSIZE + 3*PADDING), 2)
+
+    #Start screen
+    if not start:
+        rect = pygame.Rect((0, 0, WIDTH, HEIGHT))
+        pygame.draw.rect(win, BLACK, rect)
+
+        begin = font.render('Instructions', True, GREY)
+        win.blit(begin, (rect.centerx-begin.get_width()//2, rect.y+10))
+
+        step1 = '1. Click on a box'
+        step1img = smallfont.render(step1, True, BLACK)
+        win.blit(step1img, (rect.centerx-step1img.get_width()//2, rect.centery-100))
+
+        step2 = ['2. Click the arrow key matching the side of the box you select']
+        step2img = smallfont.render('2. Click the arrow key matching the side of the box', True, GREY)
+        win.blit(step2img, (rect.centerx-step2img.get_width()//2, rect.centery-50))
+
+        step3 = ['3. Whoever draws the line to create a box gets a']
+        step3 = smallfont.render('3. Whoever draws the line to create a box gets a point', True, GREY)
+        win.blit(step3, (rect.centerx-step3.get_width()//2, rect.centery))
+
+        msg1 = 'Press s:start'
+        msg1img = font.render(msg1, True, GREY)
+        win.blit(msg1img, (rect.centerx-msg1img.get_width()//2, rect.centery+100))
     
     # Creating 'cells' - the boxes - and detecting which cell is clicked
     for cell in cells:
@@ -228,7 +255,7 @@ while running:
         win.blit(over, (rect.centerx-over.get_width()//2, rect.y+10))
 
         winner = '1' if p1_score > p2_score else '2'
-        winner_img = font.render(f'Player {winner} Won', True, GREEN)
+        winner_img = font.render(f'Player {winner} Won', True, BLUE)
         win.blit(winner_img, (rect.centerx-winner_img.get_width()//2, rect.centery-10))
 
         msg = 'Press r:restart, q:quit'
