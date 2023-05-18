@@ -19,7 +19,7 @@ BLUE = (21, 127, 176)
 GREY = (166, 163, 162)
 BLACK = (0,0,0)
 
-smallfont = pygame.font.SysFont('cursive', 10)
+smallfont = pygame.font.SysFont('cursive', 15)
 font = pygame.font.SysFont('cursive', 25)
 
 class Cell:
@@ -165,7 +165,7 @@ while running:
         win.blit(begin, (rect.centerx-begin.get_width()//2, rect.y+10))
 
         step1 = '1. Click on a box'
-        step1img = smallfont.render(step1, True, BLACK)
+        step1img = smallfont.render(step1, True, GREY)
         win.blit(step1img, (rect.centerx-step1img.get_width()//2, rect.centery-100))
 
         step2 = ['2. Click the arrow key matching the side of the box you select']
