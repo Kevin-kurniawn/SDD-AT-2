@@ -66,6 +66,7 @@ class Cell:
             if side:
                 pygame.draw.line(win, BLACK, (self.edges[index][0]),
                                  self.edges[index][1], 2)
+
 def create_cells():
     cells = []
     for r in range(ROWS):
@@ -156,7 +157,7 @@ while running:
             pygame.draw.circle(win, BLACK, (c*CELLSIZE + 2*PADDING, r*CELLSIZE + 3*PADDING), 2)
 
     #Start screen
-    if not start:
+    if not start and not gameover:
         rect = pygame.Rect((0, 0, WIDTH, HEIGHT))
         pygame.draw.rect(win, BLACK, rect)
 
@@ -237,14 +238,15 @@ while running:
     p2rect = p2img.get_rect()
     p2rect.right, p2rect.y = WIDTH-PADDING, 15
 
-    win.blit(p1img, p1rect)
-    win.blit(p2img,p2rect)
-    if player == '1':
-        pygame.draw.line(win, BLUE, (p1rect.x, p1rect.bottom+2),
-                            (p1rect.right, p1rect.bottom+2), 1)
-    else:
-        pygame.draw.line(win, BLUE, (p2rect.x, p2rect.bottom+2),
-                            (p2rect.right, p2rect.bottom+2), 1)
+    if start:
+        win.blit(p1img, p1rect)
+        win.blit(p2img,p2rect)
+        if player == '1':
+            pygame.draw.line(win, BLUE, (p1rect.x, p1rect.bottom+2),
+                                (p1rect.right, p1rect.bottom+2), 1)
+        else:
+            pygame.draw.line(win, BLUE, (p2rect.x, p2rect.bottom+2),
+                                (p2rect.right, p2rect.bottom+2), 1)
     
     if gameover:
         rect = pygame.Rect((50, 100, WIDTH-100, HEIGHT-200))
