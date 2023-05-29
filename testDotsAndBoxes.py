@@ -189,6 +189,7 @@ while running:
     # Selects a specific cell, as defined by the mouse pointer
     if ccell:
         index = ccell.index
+        print((index + 1) % COLS)
         if not ccell.winner:
             pygame.draw.circle(win, RED, (ccell.rect.centerx, ccell.rect.centery), 2)
 
@@ -196,6 +197,9 @@ while running:
             ccell.sides[0] = True
             if index - ROWS >= 0:
                 cells[index - ROWS].sides[2] = True
+                next_turn = True
+            elif index - ROWS < 0:
+                cells[index].sides[0] = True
                 next_turn = True
         if right and not ccell.sides[1]:
             ccell.sides[1] = True
