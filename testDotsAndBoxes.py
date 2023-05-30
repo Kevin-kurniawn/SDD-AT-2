@@ -15,6 +15,7 @@ WHITE = (255,255,255)
 RED = (179, 39, 29)
 YELLOW = (252,180,0)
 ORANGE = (235, 95, 40)
+GREEN = (59, 166, 50)
 BLUE = (21, 127, 176)
 GREY = (166, 163, 162)
 BLACK = (0,0,0)
@@ -161,23 +162,23 @@ while running:
         rect = pygame.Rect((0, 0, WIDTH, HEIGHT))
         pygame.draw.rect(win, BLACK, rect)
 
-        begin = font.render('Instructions', True, GREY)
+        begin = font.render('Instructions', True, GREEN)
         win.blit(begin, (rect.centerx-begin.get_width()//2, rect.y+10))
 
         step1 = '1. Click on a box'
-        step1img = smallfont.render(step1, True, GREY)
+        step1img = smallfont.render(step1, True, GREEN)
         win.blit(step1img, (rect.centerx-step1img.get_width()//2, rect.centery-100))
 
         step2 = ['2. Click the arrow key matching the side of the box you select']
-        step2img = smallfont.render('2. Click the arrow key matching the side of the box', True, GREY)
+        step2img = smallfont.render('2. Click the arrow key matching the side of the box', True, GREEN)
         win.blit(step2img, (rect.centerx-step2img.get_width()//2, rect.centery-50))
 
         step3 = ['3. Whoever draws the line to create a box gets a']
-        step3 = smallfont.render('3. Whoever draws the line to create a box gets a point', True, GREY)
+        step3 = smallfont.render('3. Whoever draws the line to create a box gets a point', True, GREEN)
         win.blit(step3, (rect.centerx-step3.get_width()//2, rect.centery))
 
         msg1 = 'Press s:start'
-        msg1img = font.render(msg1, True, GREY)
+        msg1img = font.render(msg1, True, GREEN)
         win.blit(msg1img, (rect.centerx-msg1img.get_width()//2, rect.centery+100))
     
     # Creating 'cells' - the boxes - and detecting which cell is clicked
@@ -189,7 +190,6 @@ while running:
     # Selects a specific cell, as defined by the mouse pointer
     if ccell:
         index = ccell.index
-        print((index + 1) % COLS)
         if not ccell.winner:
             pygame.draw.circle(win, RED, (ccell.rect.centerx, ccell.rect.centery), 2)
 
@@ -206,15 +206,24 @@ while running:
             if (index + 1) % COLS > 0:
                 cells[index+1].sides[3] = True
                 next_turn = True
+            elif (index + 1) % COLS == 0:
+                cells[index].sides[1] = True
+                next_turn = True
         if bottom and not ccell.sides[2]:
             ccell.sides[2] = True
             if (index + ROWS) < len(cells):
                 cells[index + ROWS].sides[0] = True
                 next_turn = True
+            elif (index + ROWS) > len(cells):
+                cells[index].sides[2] = True
+                next_turn = True
         if left and not ccell.sides[3]:
             ccell.sides[3] = True
             if index % COLS > 0:
                 cells[index-1].sides[1] = True
+                next_turn = True
+            elif index % COLS == 0:
+                cells[index].sides[3] = True
                 next_turn = True
 
         res = ccell.checkwin(player)
