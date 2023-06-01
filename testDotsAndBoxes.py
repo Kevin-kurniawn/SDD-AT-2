@@ -65,7 +65,7 @@ class Cell:
             win.blit(self.text, (self.rect.centerx-5, self.rect.centery-7))
         for index, side in enumerate(self.sides):
             if side:
-                pygame.draw.line(win, BLUE, (self.edges[index][0]),
+                pygame.draw.line(win, BLACK, (self.edges[index][0]),
                                  self.edges[index][1], 2)
 
 def create_cells():
