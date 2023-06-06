@@ -77,5 +77,9 @@ while not done:
 
 ## 12/5/23
 
-Created dots and boxes game from a youtube video series from here: https://www.youtube.com/watch?v=IMpQOY-RiIk
+Created dots and boxes game from a youtube video series: https://www.youtube.com/watch?v=IMpQOY-RiIk
     
+## 7/6/23
+
+Fixed bugs in the Dots and Boxes game from the youtube video series, starting development on a simple line game involving boxes
+
