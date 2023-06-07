@@ -31,6 +31,24 @@ class Cell:
 
         self.winner = None
 
+    def checkwin(self, winner):
+        if not self.winner:
+            if cell.rect.collidepoint(pos):
+                self.winner = winner
+                if winner == '1':
+                    self.color = BLUE
+                else:
+                    self.color = RED
+                self.text = font.render(self.winner, True, WHITE)
+
+                return 1
+        return 0
+
+    def update(self, win):
+        if self.winner:
+            pygame.draw.rect(win, self.color, self.rect)
+            win.blit(self.text, (self.rect.centerx-5, self.rect.centery-7))
+
 def create_cells():
     cells = []
     for r in range(ROWS):
@@ -45,10 +63,9 @@ def reset_cells():
     return pos, ccell
 
 def reset_score():
-    fillcount = 0
     p1_score = 0
     p2_score = 0
-    return fillcount, p1_score, p2_score
+    return p1_score, p2_score
 
 def reset_player():
     turn = 0
@@ -78,7 +95,7 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONUP:
             pos = None
-        
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                 running = False 
@@ -88,41 +105,34 @@ while running:
                 gameover = False
                 cells = create_cells()
                 pos, ccell = reset_cells()
-                fillcount, p1_score, p2_score = reset_score()
+                p1_score, p2_score = reset_score()
                 turn, players, player, next_turn = reset_player()
-            
-    # Creating grid
-    for r in range(ROWS + 1):
-        for c in range(COLS + 1):
+        
+    for r in range(ROWS+1):
+        for c in range(COLS+1):
             pygame.draw.circle(win, BLACK, (c*CELLSIZE + 2*PADDING, r*CELLSIZE + 3*PADDING), 2)
     
-    #Start screen
-    if not start and not gameover:
-        rect = pygame.Rect((0, 0, WIDTH, HEIGHT))
-        pygame.draw.rect(win, BLACK, rect)
-
-        begin = font.render('Instructions', True, GREEN)
-        win.blit(begin, (rect.centerx-begin.get_width()//2, rect.y+10))
-
-        step1 = '1. Click on a box to make it yours'
-        step1img = smallfont.render(step1, True, GREEN)
-        win.blit(step1img, (rect.centerx-step1img.get_width()//2, rect.centery-100))
-
-        step2 = '2. Try to connect the boxes of your colour'
-        step2img = smallfont.render(step2, True, GREEN)
-        win.blit(step2img, (rect.centerx-step2img.get_width()//2, rect.centery-50))
-
-        step3 = '3. Whoever creates the longest line wins!'
-        step3img = smallfont.render(step3, True, GREEN)
-        win.blit(step3img, (rect.centerx-step3img.get_width()//2, rect.centery))
-
-        msg1 = 'Press s:start'
-        msg1img = font.render(msg1, True, GREEN)
-        win.blit(msg1img, (rect.centerx-msg1img.get_width()//2, rect.centery+100))
-    
     for cell in cells:
-        pygame.draw.rect(win, GREY, cell.rect)
+        cell.update(win)
         if pos and cell.rect.collidepoint(pos):
             ccell = cell
-    
-    
+
+    if ccell:
+        index = ccell.index
+        ccell.winner = player
+        next_turn = True
+
+        res = ccell.checkwin(player)
+        if res:
+            if player == '1':
+                p1_score += 1
+            else:
+                p2_score += 1
+
+            if p1_score or p2_score == 5:
+                print(p1_score, p2_score)
+                gameover = True
+
+    pygame.display.update()
+
+pygame.quit()
