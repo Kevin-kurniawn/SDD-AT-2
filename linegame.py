@@ -33,14 +33,13 @@ class Cell:
 
     def checkwin(self, winner):
         if not self.winner:
-            if cell.rect.collidepoint(pos):
+            if ccell == cell:
                 self.winner = winner
                 if winner == '1':
                     self.color = BLUE
                 else:
                     self.color = RED
                 self.text = font.render(self.winner, True, WHITE)
-
                 return 1
         return 0
 
@@ -78,7 +77,7 @@ start = False
 gameover = False
 cells = create_cells()
 pos, ccell = reset_cells()
-fillcount, p1_score, p2_score = reset_score()
+p1_score, p2_score = reset_score()
 turn, players, player, next_turn = reset_player()
 
 running = True
