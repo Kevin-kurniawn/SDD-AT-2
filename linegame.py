@@ -33,14 +33,13 @@ class Cell:
 
     def checkwin(self, winner):
         if not self.winner:
-            if ccell == cell:
-                self.winner = winner
-                if winner == '1':
-                    self.color = BLUE
-                else:
-                    self.color = RED
-                self.text = font.render(self.winner, True, WHITE)
-                return 1
+            self.winner = winner
+            if winner == '1':
+                self.color = BLUE
+            else:
+                self.color = RED
+            self.text = font.render(self.winner, True, WHITE)
+            return 1
         return 0
 
     def update(self, win):
