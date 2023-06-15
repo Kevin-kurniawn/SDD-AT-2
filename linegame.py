@@ -47,37 +47,24 @@ class Cell:
             pygame.draw.rect(win, self.color, self.rect)
             win.blit(self.text, (self.rect.centerx-5, self.rect.centery-7))
 
-def create_cells():
-    cells = []
-    for r in range(ROWS):
-        for c in range (COLS):
-            cell = Cell(r, c)
-            cells.append(cell)
-    return cells
+cells = []
+for r in range(ROWS):
+    for c in range (COLS):
+        cell = Cell(r, c)
+        cells.append(cell)
 
-def reset_cells():
-    pos = None
-    ccell = None
-    return pos, ccell
+pos = None
+ccell = None
 
-def reset_score():
-    p1_score = 0
-    p2_score = 0
-    return p1_score, p2_score
 
-def reset_player():
-    turn = 0
-    players = ['1', '2']
-    player = players[turn]
-    next_turn = False
-    return turn, players, player, next_turn
+p1_score = 0
+p2_score = 0
 
-start = False
-gameover = False
-cells = create_cells()
-pos, ccell = reset_cells()
-p1_score, p2_score = reset_score()
-turn, players, player, next_turn = reset_player()
+
+turn = 0
+players = ['1', '2']
+player = players[turn]
+next_turn = False
 
 running = True
 while running:
@@ -96,15 +83,7 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
-                running = False 
-
-            if event.key == pygame.K_r or event.key == pygame.K_s:
-                start = True
-                gameover = False
-                cells = create_cells()
-                pos, ccell = reset_cells()
-                p1_score, p2_score = reset_score()
-                turn, players, player, next_turn = reset_player()
+                running = False
         
     for r in range(ROWS+1):
         for c in range(COLS+1):
@@ -117,19 +96,31 @@ while running:
 
     if ccell:
         index = ccell.index
-        ccell.winner = player
-        next_turn = True
 
-        res = ccell.checkwin(player)
-        if res:
-            if player == '1':
-                p1_score += 1
-            else:
-                p2_score += 1
+        if ccell.checkwin(player):
+            next_turn = True
+        
+        if next_turn:
+            turn = (turn + 1) % 2
+            player = players[turn]
+            next_turn = False
+    
+    p1img = font.render(f'Player 1 : {p1_score}', True, BLUE)
+    p1rect = p1img.get_rect()
+    p1rect.x, p1rect.y = PADDING, 15
 
-            if p1_score or p2_score == 5:
-                print(p1_score, p2_score)
-                gameover = True
+    p2img = font.render(f'Player 2 : {p2_score}', True, BLUE)
+    p2rect = p2img.get_rect()
+    p2rect.right, p2rect.y = WIDTH-PADDING, 15
+
+    win.blit(p1img, p1rect)
+    win.blit(p2img,p2rect)
+    if player == '1':
+        pygame.draw.line(win, BLUE, (p1rect.x, p1rect.bottom+2),
+                            (p1rect.right, p1rect.bottom+2), 1)
+    else:
+        pygame.draw.line(win, BLUE, (p2rect.x, p2rect.bottom+2),
+                            (p2rect.right, p2rect.bottom+2), 1)    
 
     pygame.display.update()
 
