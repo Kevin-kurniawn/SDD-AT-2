@@ -30,8 +30,21 @@ class Cell:
         self.rect = pygame.Rect((c*CELLSIZE + 2*PADDING, r*CELLSIZE + 3*PADDING, CELLSIZE, CELLSIZE))
 
         self.winner = None
+    
+    def count_connected_cells(self, dr, dc, player, cells):
+        r, c = self.r + dr, self.c + dc
+        count = 0
+        while 0 <= r < ROWS and 0 <= c < COLS:
+            cell = cells[r * ROWS + c]
+            if cell.winner == player:
+                count += 1
+                r += dr
+                c += dc
+            else:
+                break
+        return count
 
-    def checkwin(self, winner):
+    def checkwin(self, winner, cells):
         if not self.winner:
             self.winner = winner
             if winner == '1':
@@ -39,7 +52,12 @@ class Cell:
             else:
                 self.color = RED
             self.text = font.render(self.winner, True, WHITE)
-            return 1
+            
+            connected_cells = 1
+            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1)]:
+                connected_cells += self.count_connected_cells(dr, dc, winner, cells)
+
+            return connected_cells
         return 0
 
     def update(self, win):
@@ -97,9 +115,14 @@ while running:
     if ccell:
         index = ccell.index
 
-        if ccell.checkwin(player):
+        connected_cells = ccell.checkwin(player, cells)
+        if connected_cells > 0:
             next_turn = True
-        
+            if player == '1':
+                p1_score += connected_cells
+            else:
+                p2_score += connected_cells
+
         if next_turn:
             turn = (turn + 1) % 2
             player = players[turn]
