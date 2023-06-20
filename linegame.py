@@ -119,9 +119,9 @@ while running:
         if connected_cells > 0:
             next_turn = True
             if player == '1':
-                p1_score += connected_cells
+                p1_score = connected_cells
             else:
-                p2_score += connected_cells
+                p2_score = connected_cells
 
         if next_turn:
             turn = (turn + 1) % 2
