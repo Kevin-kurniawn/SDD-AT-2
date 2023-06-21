@@ -56,7 +56,7 @@ class Cell:
             connected_cells = 1
             for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1)]:
                 connected_cells += self.count_connected_cells(dr, dc, winner, cells)
-
+                
             return connected_cells
         return 0
 
