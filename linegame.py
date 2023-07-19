@@ -1,4 +1,5 @@
 import pygame
+import random
 
 SCREEN = WIDTH, HEIGHT = 300, 300
 CELLSIZE = 30
@@ -100,14 +101,16 @@ def reset_cells():
 def reset_turn():
     turn = 0
     players = ['1', '2']
+    is_human = [True, False]  # Indicates whether each player is human or computer
     player = players[turn]
     next_turn = False
-    return turn, players, player, next_turn
+    return turn, players, player, next_turn, is_human
+
 
 gameover = False
 cells = create_cells()
 pos, ccell = reset_cells()
-turn, players, player, next_turn = reset_turn()
+turn, players, player, next_turn, is_human = reset_turn()
 
 running = True
 while running:
@@ -150,9 +153,23 @@ while running:
             next_turn = True
 
         if next_turn:
-            turn = (turn + 1) % 2
-            player = players[turn]
-            next_turn = False
+            if is_human[turn]:  # Check if the current player is human
+                turn = (turn + 1) % 2
+                player = players[turn]
+                next_turn = False
+            else:  # Computer's turn (Player 2)
+                # Here, we'll implement the computer's move logic
+                available_cells = [cell for cell in cells if not cell.winner]
+                print(available_cells)
+                if available_cells:
+                    ccell = random.choice(available_cells)
+
+                    if ccell.checkwin(player, cells):
+                        next_turn = True
+
+                turn = (turn + 1) % 2
+                player = players[turn]
+                next_turn = False
     
     p1img = font.render('Player 1', True, BLUE)
     p1rect = p1img.get_rect()
