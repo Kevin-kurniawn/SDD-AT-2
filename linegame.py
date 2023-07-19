@@ -163,14 +163,14 @@ while running:
         # Here, we'll implement the computer's move logic
         available_cells = [cell for cell in cells if not cell.winner]
         if available_cells:
-            ccell = random.choice(available_cells)       
+            ccell = random.choice(available_cells)
             if ccell.checkwin(player):
                 next_turn = True
 
         turn = (turn + 1) % 2
         player = players[turn]
         next_turn = False
-
+        
     p1img = font.render('Player 1', True, BLUE)
     p1rect = p1img.get_rect()
     p1rect.x, p1rect.y = PADDING, 15
