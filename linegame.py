@@ -85,6 +85,45 @@ def wincondition(cells):
                     if all(cells[(r + i) * ROWS + c + i].winner == current_player for i in range(4)):
                         return True, current_player
 
+def computer_move():
+    global ccell, next_turn, turn, player
+
+    # Find available cells (not occupied by any player)
+    available_cells = [cell for cell in cells if not cell.winner]
+
+    #Check for winning move
+    for cell in available_cells:
+        cell.winner = player
+        if wincondition(cells):
+            ccell = cell
+            next_turn = True
+            break
+        cell.winner = None
+    
+    #Check for blocking move
+    if not next_turn:
+        for cell in available_cells:
+                cell.winner = players[(turn + 1) % 2]
+                if wincondition(cells):
+                    ccell = cell
+                    next_turn = True
+                    break
+                cell.winner = None
+
+    #If no available wins or blocks, randomly choose a cell
+    if not next_turn:
+        if available_cells:
+            ccell = random.choice(available_cells)
+
+    if ccell:
+        if ccell.checkwin(player):
+            next_turn = True
+
+        # Switch to the next player
+        turn = (turn + 1) % 2
+        player = players[turn]
+        next_turn = False
+
 def create_cells():
     cells = []
     for r in range(ROWS):
@@ -135,7 +174,7 @@ while running:
                 gameover = False
                 cells = create_cells()
                 pos, ccell = reset_cells()
-                turn, players, player, next_turn = reset_turn()
+                turn, players, player, next_turn, is_human = reset_turn()
         
     for r in range(ROWS+1):
         for c in range(COLS+1):
@@ -160,16 +199,7 @@ while running:
 
     # Computer's turn (Player 2)
     if not is_human[turn] and not next_turn and not gameover:
-        # Here, we'll implement the computer's move logic
-        available_cells = [cell for cell in cells if not cell.winner]
-        if available_cells:
-            ccell = random.choice(available_cells)
-            if ccell.checkwin(player):
-                next_turn = True
-
-        turn = (turn + 1) % 2
-        player = players[turn]
-        next_turn = False
+        computer_move()
         
     p1img = font.render('Player 1', True, BLUE)
     p1rect = p1img.get_rect()
