@@ -105,6 +105,7 @@ def computer_move():
         for cell in available_cells:
                 cell.winner = players[(turn + 1) % 2]
                 if wincondition(cells):
+                    cell.winner = None
                     ccell = cell
                     next_turn = True
                     break
@@ -181,11 +182,12 @@ while running:
             pygame.draw.circle(win, BLACK, (c*CELLSIZE + 2*PADDING, r*CELLSIZE + 3*PADDING), 2)
     
     for cell in cells:
-        cell.update(win)
-        if pos and cell.rect.collidepoint(pos):
-            ccell = cell
+        if not gameover:
+            cell.update(win)
+            if pos and cell.rect.collidepoint(pos):
+                ccell = cell
 
-    if ccell:
+    if ccell and not gameover:
         index = ccell.index
 
         if ccell.checkwin(player):
@@ -200,6 +202,7 @@ while running:
     # Computer's turn (Player 2)
     if not is_human[turn] and not next_turn and not gameover:
         computer_move()
+
         
     p1img = font.render('Player 1', True, BLUE)
     p1rect = p1img.get_rect()
