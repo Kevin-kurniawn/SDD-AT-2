@@ -146,7 +146,7 @@ def reset_turn():
     next_turn = False
     return turn, players, player, next_turn, is_human
 
-
+start = False
 gameover = False
 cells = create_cells()
 pos, ccell = reset_cells()
@@ -171,12 +171,32 @@ while running:
             if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                 running = False
             
-            if event.key == pygame.K_r:
+            if event.key == pygame.K_r or event.key == pygame.K_s:
+                start = True
                 gameover = False
                 cells = create_cells()
                 pos, ccell = reset_cells()
                 turn, players, player, next_turn, is_human = reset_turn()
-        
+    
+    if not start and not gameover:
+        rect = pygame.Rect((0, 0, WIDTH, HEIGHT))
+        pygame.draw.rect(win, BLACK, rect)
+
+        begin = font.render('Instructions', True, GREEN)
+        win.blit(begin, (rect.centerx-begin.get_width()//2, rect.y+10))
+
+        step1 = '1. Click on a box to fill it with your color'
+        step1img = smallfont.render(step1, True, GREEN)
+        win.blit(step1img, (rect.centerx-step1img.get_width()//2, rect.centery-100))
+
+        step2 = '2. Get four boxes ina row to win'
+        step2img = smallfont.render(step2, True, GREEN)
+        win.blit(step2img, (rect.centerx-step2img.get_width()//2, rect.centery-50))
+
+        msg1 = 'Press s:start'
+        msg1img = font.render(msg1, True, GREEN)
+        win.blit(msg1img, (rect.centerx-msg1img.get_width()//2, rect.centery+100))
+
     for r in range(ROWS+1):
         for c in range(COLS+1):
             pygame.draw.circle(win, BLACK, (c*CELLSIZE + 2*PADDING, r*CELLSIZE + 3*PADDING), 2)
@@ -212,14 +232,15 @@ while running:
     p2rect = p2img.get_rect()
     p2rect.right, p2rect.y = WIDTH-PADDING, 15
 
-    win.blit(p1img, p1rect)
-    win.blit(p2img,p2rect)
-    if player == '1':
-        pygame.draw.line(win, BLUE, (p1rect.x, p1rect.bottom+2),
-                            (p1rect.right, p1rect.bottom+2), 1)
-    else:
-        pygame.draw.line(win, BLUE, (p2rect.x, p2rect.bottom+2),
-                            (p2rect.right, p2rect.bottom+2), 1)    
+    if start:
+        win.blit(p1img, p1rect)
+        win.blit(p2img,p2rect)
+        if player == '1':
+            pygame.draw.line(win, BLUE, (p1rect.x, p1rect.bottom+2),
+                                (p1rect.right, p1rect.bottom+2), 1)
+        else:
+            pygame.draw.line(win, BLUE, (p2rect.x, p2rect.bottom+2),
+                                (p2rect.right, p2rect.bottom+2), 1)
 
     if wincondition(cells):
         gameover = wincondition(cells)
