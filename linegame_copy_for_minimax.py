@@ -19,7 +19,7 @@ BLUE = (21, 127, 176)
 GREY = (166, 163, 162)
 BLACK = (0,0,0)
 
-smallfont = pygame.font.SysFont('cursive', 15)
+smallfont = pygame.font.SysFont('cursive', 16)
 font = pygame.font.SysFont('cursive', 25)
 
 class Cell:
@@ -84,45 +84,105 @@ def wincondition(cells):
                 if current_player:
                     if all(cells[(r + i) * ROWS + c + i].winner == current_player for i in range(4)):
                         return True, current_player
+        # Check diagonally (top-right to bottom-left)
+        for r in range(ROWS - 3):
+            for c in range(3, COLS):
+                current_player = cells[r * ROWS + c].winner
+                if current_player:
+                    if all(cells[(r + i) * ROWS + c - i].winner == current_player for i in range(4)):
+                        return True, current_player
 
-def minimax():
+def heuristic(cells):
+    # Check horizontally
+    score = 0
+    for r in range(ROWS):
+        for c in range(COLS-3):
+            count_player1 = cells[r * ROWS + c].count_connected_cells(0, 1, '1', cells)
+            count_player2 = cells[r * ROWS + c].count_connected_cells(0, 1, '2', cells)
+            score += (count_player2 - count_player1)
+
+    # Check vertically
+    for r in range(ROWS-3):
+        for c in range(COLS):
+            count_player1 = cells[r * ROWS + c].count_connected_cells(1, 0, '1', cells)
+            count_player2 = cells[r * ROWS + c].count_connected_cells(1, 0, '2', cells)
+            score += (count_player2 - count_player1)
+
+    # Check diagonally (top-left to bottom-right)
+    for r in range(ROWS-3):
+        for c in range(COLS-3):
+            count_player1 = cells[r * ROWS + c].count_connected_cells(1, 1, '1', cells)
+            count_player2 = cells[r * ROWS + c].count_connected_cells(1, 1, '2', cells)
+            score += (count_player2 - count_player1)
+
+    # Check diagonally (top-right to bottom-left)
+    for r in range(ROWS-3):
+        for c in range(3, COLS):
+            count_player1 = cells[r * ROWS + c].count_connected_cells(1, -1, '1', cells)
+            count_player2 = cells[r * ROWS + c].count_connected_cells(1, -1, '2', cells)
+            score += (count_player2 - count_player1)
+
+    return score
+
+def minimax_alpha_beta(cells, depth, alpha, beta, is_maximizing, max_depth):
     if wincondition(cells):
-        return 1 if player == '1' else -1
-    
+        if wincondition(cells)[1] == '2':  # If the computer wins
+            return 1
+        elif wincondition(cells)[1] == '1':  # If the human wins
+            return -1
+    elif not any(cell.winner is None for cell in cells):  # If the board is full
+        return 0
+    elif depth == max_depth:  # If the depth limit has been reached
+        return heuristic(cells)  # Estimate the score of the game state
+
+    if is_maximizing:
+        best_score = -float('inf')
+        for cell in cells:
+            if cell.winner is None:
+                cell.winner = '2'
+                score = minimax_alpha_beta(cells, depth + 1, alpha, beta, False, max_depth)
+                cell.winner = None
+                best_score = max(score, best_score)
+                alpha = max(alpha, best_score)
+                if beta <= alpha:
+                    break
+        return best_score
+    else:
+        best_score = float('inf')
+        for cell in cells:
+            if cell.winner is None:
+                cell.winner = '1'
+                score = minimax_alpha_beta(cells, depth + 1, alpha, beta, True, max_depth)
+                cell.winner = None
+                best_score = min(score, best_score)
+                beta = min(beta, best_score)
+                if beta <= alpha:
+                    break
+        return best_score
 
 def computer_move():
-    global ccell, next_turn, turn, player
+    global ccell, next_turn, turn, player, gameover
 
-    # Find available cells (not occupied by any player)
-    available_cells = [cell for cell in cells if not cell.winner]
+    if gameover:  # Check if the game is already over
+        return
 
-    #Check for winning move
-    for cell in available_cells:
-        cell.winner = player
-        if wincondition(cells):
-            ccell = cell
-            next_turn = True
-            break
-        cell.winner = None
-    
-    #Check for blocking move
-    if not next_turn:
-        for cell in available_cells:
-                cell.winner = players[(turn + 1) % 2]
-                if wincondition(cells):
-                    cell.winner = None
-                    ccell = cell
-                    next_turn = True
-                    break
-                cell.winner = None
+    best_score = -float('inf')
+    best_move = None
 
-    #If no available wins or blocks, randomly choose a cell
-    if not next_turn:
-        if available_cells:
-            ccell = random.choice(available_cells)
+    for cell in cells:
+        if cell.winner is None:
+            cell.winner = player
+            if wincondition(cells):  # Check if the human's move resulted in a win
+                gameover = wincondition(cells)
+                return
+            score = minimax_alpha_beta(cells, 0, -float('inf'), float('inf'), False, max_depth)  # Variable depth depending on user input
+            cell.winner = None
+            if score > best_score:
+                best_score = score
+                best_move = cell
 
-    if ccell:
-        if ccell.checkwin(player):
+    if best_move:
+        if best_move.checkwin(player):
             next_turn = True
 
         # Switch to the next player
@@ -149,13 +209,14 @@ def reset_turn():
     is_human = [True, False]  # Indicates whether each player is human or computer
     player = players[turn]
     next_turn = False
-    return turn, players, player, next_turn, is_human
+    difficulty = 'Easy'
+    return turn, players, player, next_turn, is_human, difficulty
 
 start = False
 gameover = False
 cells = create_cells()
 pos, ccell = reset_cells()
-turn, players, player, next_turn, is_human = reset_turn()
+turn, players, player, next_turn, is_human, difficulty = reset_turn()
 
 running = True
 while running:
@@ -181,8 +242,19 @@ while running:
                 gameover = False
                 cells = create_cells()
                 pos, ccell = reset_cells()
-                turn, players, player, next_turn, is_human = reset_turn()
+                turn, players, player, next_turn, is_human, difficulty = reset_turn()
+
+            if event.key == pygame.K_1:
+                max_depth = 0
+                difficulty = 'Easy'
+            elif event.key == pygame.K_2:
+                max_depth = 1
+                difficulty = 'Medium'
+            elif event.key == pygame.K_3:
+                max_depth = 2
+                difficulty = 'Hard'
     
+    # Start screen
     if not start and not gameover:
         rect = pygame.Rect((0, 0, WIDTH, HEIGHT))
         pygame.draw.rect(win, BLACK, rect)
@@ -197,6 +269,10 @@ while running:
         step2 = '2. Get four boxes ina row to win'
         step2img = smallfont.render(step2, True, GREEN)
         win.blit(step2img, (rect.centerx-step2img.get_width()//2, rect.centery-50))
+
+        step3 = '3. Press 1 (Easy), 2 (Medium) or 3 (Hard) to set difficulty'
+        step3img = smallfont.render(step3, True, GREEN)
+        win.blit(step3img, (rect.centerx-step3img.get_width()//2, rect.centery))
 
         msg1 = 'Press s:start'
         msg1img = font.render(msg1, True, GREEN)
@@ -227,7 +303,6 @@ while running:
     # Computer's turn (Player 2)
     if not is_human[turn] and not next_turn and not gameover:
         computer_move()
-
         
     p1img = font.render('Player 1', True, BLUE)
     p1rect = p1img.get_rect()
@@ -236,10 +311,15 @@ while running:
     p2img = font.render('Player 2', True, BLUE)
     p2rect = p2img.get_rect()
     p2rect.right, p2rect.y = WIDTH-PADDING, 15
+    
+    diffimg = smallfont.render(f'Difficulty: {difficulty}', True, BLUE)
+    diffrect = diffimg.get_rect()
+    diffrect.centerx, diffrect.y = WIDTH//2, 15
 
     if start:
         win.blit(p1img, p1rect)
-        win.blit(p2img,p2rect)
+        win.blit(p2img, p2rect)
+        win.blit(diffimg, diffrect)
         if player == '1':
             pygame.draw.line(win, BLUE, (p1rect.x, p1rect.bottom+2),
                                 (p1rect.right, p1rect.bottom+2), 1)
