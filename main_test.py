@@ -214,6 +214,7 @@ def reset_turn():
 
 start = False
 gameover = False
+vs_computer = True
 cells = create_cells()
 pos, ccell = reset_cells()
 turn, players, player, next_turn, is_human, difficulty = reset_turn()
@@ -247,12 +248,18 @@ while running:
             if event.key == pygame.K_1:
                 max_depth = 0
                 difficulty = 'Easy'
+                vs_computer = True
             elif event.key == pygame.K_2:
                 max_depth = 1
+                vs_computer = True
                 difficulty = 'Medium'
             elif event.key == pygame.K_3:
                 max_depth = 2
+                vs_computer = True
                 difficulty = 'Hard'
+            elif event.key == pygame.K_4:
+                vs_computer = False
+                difficulty = '2 Player'
     
     # Start screen
     if not start and not gameover:
@@ -274,8 +281,8 @@ while running:
         step3img = smallfont.render(step3, True, GREEN)
         win.blit(step3img, (rect.centerx-step3img.get_width()//2, rect.centery))
 
-        msg1 = 'Press s:start'
-        msg1img = font.render(msg1, True, GREEN)
+        msg1 = 'Press s:start, press 4 to play against a friend'
+        msg1img = smallfont.render(msg1, True, GREEN)
         win.blit(msg1img, (rect.centerx-msg1img.get_width()//2, rect.centery+100))
 
     for r in range(ROWS+1):
@@ -288,21 +295,33 @@ while running:
             if pos and cell.rect.collidepoint(pos):
                 ccell = cell
 
-    if ccell and not gameover:
-        index = ccell.index
+    if vs_computer:
 
-        if ccell.checkwin(player):
-            next_turn = True
+        if ccell and not gameover:
+            index = ccell.index
 
-        if next_turn:
-            if is_human[turn]:  # Check if the current player is human
+            if ccell.checkwin(player):
+                next_turn = True
+
+            if next_turn:
+                if is_human[turn]:  # Check if the current player is human
+                    turn = (turn + 1) % 2
+                    player = players[turn]
+                    next_turn = False
+
+        # Computer's turn (Player 2)
+        if not is_human[turn] and not next_turn and not gameover:
+            computer_move()
+
+    else:
+        if ccell and not gameover:
+            if ccell.checkwin(player):
+                next_turn = True
+
+            if next_turn:
                 turn = (turn + 1) % 2
                 player = players[turn]
                 next_turn = False
-
-    # Computer's turn (Player 2)
-    if not is_human[turn] and not next_turn and not gameover:
-        computer_move()
         
     p1img = font.render('Player 1', True, BLUE)
     p1rect = p1img.get_rect()
