@@ -210,14 +210,15 @@ def reset_turn():
     player = players[turn]
     next_turn = False
     difficulty = 'Easy'
-    return turn, players, player, next_turn, is_human, difficulty
+    max_depth = 0
+    return turn, players, player, next_turn, is_human, difficulty, max_depth
 
 start = False
 gameover = False
 vs_computer = True
 cells = create_cells()
 pos, ccell = reset_cells()
-turn, players, player, next_turn, is_human, difficulty = reset_turn()
+turn, players, player, next_turn, is_human, difficulty, max_depth = reset_turn()
 
 running = True
 while running:
@@ -243,7 +244,7 @@ while running:
                 gameover = False
                 cells = create_cells()
                 pos, ccell = reset_cells()
-                turn, players, player, next_turn, is_human, difficulty = reset_turn()
+                turn, players, player, next_turn, is_human, difficulty, max_depth = reset_turn()
 
             if event.key == pygame.K_1:
                 max_depth = 0
