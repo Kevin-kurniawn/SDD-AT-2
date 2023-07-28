@@ -299,7 +299,7 @@ while running:
 
     if vs_computer:
 
-        if ccell and not gameover:
+        if ccell and start and not gameover:
             index = ccell.index
 
             if ccell.checkwin(player):
@@ -316,7 +316,7 @@ while running:
             computer_move()
 
     else:
-        if ccell and not gameover:
+        if ccell and start and not gameover:
             if ccell.checkwin(player):
                 next_turn = True
 
