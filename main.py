@@ -276,7 +276,7 @@ while running:
         step1img = smallfont.render(step1, True, GREEN)
         win.blit(step1img, (rect.centerx-step1img.get_width()//2, rect.centery-100))
 
-        step2 = '2. Get four boxes ina row to win'
+        step2 = '2. Get five boxes in a row to win'
         step2img = smallfont.render(step2, True, GREEN)
         win.blit(step2img, (rect.centerx-step2img.get_width()//2, rect.centery-50))
 
