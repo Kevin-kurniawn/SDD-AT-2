@@ -85,8 +85,8 @@ def wincondition(cells):
                     if all(cells[(r + i) * ROWS + c + i].winner == current_player for i in range(5)):
                         return True, current_player
         # Check diagonally (top-right to bottom-left)
-        for r in range(ROWS - 4):
-            for c in range(3, COLS):
+        for r in range(ROWS-4):
+            for c in range(4, COLS):
                 current_player = cells[r * ROWS + c].winner
                 if current_player:
                     if all(cells[(r + i) * ROWS + c - i].winner == current_player for i in range(5)):
@@ -110,14 +110,14 @@ def heuristic(cells):
 
     # Check diagonally (top-left to bottom-right)
     for r in range(ROWS-4):
-        for c in range(COLS-3):
+        for c in range(COLS-4):
             count_player1 = cells[r * ROWS + c].count_connected_cells(1, 1, '1', cells)
             count_player2 = cells[r * ROWS + c].count_connected_cells(1, 1, '2', cells)
             score += (count_player2 - count_player1)
 
     # Check diagonally (top-right to bottom-left)
     for r in range(ROWS-4):
-        for c in range(3, COLS):
+        for c in range(4, COLS):
             count_player1 = cells[r * ROWS + c].count_connected_cells(1, -1, '1', cells)
             count_player2 = cells[r * ROWS + c].count_connected_cells(1, -1, '2', cells)
             score += (count_player2 - count_player1)
@@ -245,7 +245,7 @@ while running:
                 gameover = False
                 cells = create_cells()
                 pos, ccell = reset_cells()
-                turn, players, player, next_turn, is_human, difficutly, max_depth = reset_turn()
+                turn, players, player, next_turn, is_human, difficulty, max_depth = reset_turn()
 
             if event.key == pygame.K_1:
                 max_depth = 0
