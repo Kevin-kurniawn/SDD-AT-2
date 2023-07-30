@@ -1,1 +1,2 @@
 # SDD-AT-2
+This project aims to create a Python game, using Pygame, where the players attempt to fill in 5 boxes in a row within a 6x6 grid, similar to games like “Connect 4” and “Tic Tac Toe”. The player will play against a computer “minimax” algorithm, with the difficulty of the algorithm able to be altered according to the player’s wishes. The objective of this project is to provide a short-term entertainment program where players can also challenge themselves by playing against varying levels of the minimax algorithm.
